@@ -1,0 +1,53 @@
+package com.mindmines.smartmomma;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+
+import com.mindmines.smartmomma.Background.Mytask;
+
+import java.util.Date;
+
+public class DiscliamerActivity extends AppCompatActivity {
+Button agree,disagree;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_discliamer);
+
+        agree= (Button) findViewById(R.id.disclaimer_agree_button);
+        disagree= (Button) findViewById(R.id.disclaimer_disagree_button);
+
+        agree.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences.Editor editor =getSharedPreferences("disclaimer",MODE_PRIVATE).edit();
+                editor.putBoolean("dbol",false).commit();
+                if (isInternetAvail()) {
+                    Date date = new Date();
+                    //  SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                    //  String requiredurl=""+ft.format(date);
+                    Mytask mytask = new Mytask(getApplicationContext());
+                    mytask.execute("http://smartmommafoodfinderwebapi.azurewebsites.net/v1/food/getdataupdate?dataDateTime=2016-08-14T11:11:11");
+                }
+
+            }
+        });
+    }
+    public boolean isInternetAvail() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        return isConnected;
+    }
+}
