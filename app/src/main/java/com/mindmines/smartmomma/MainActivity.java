@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Rect;
+import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.TabLayout;
@@ -11,12 +13,14 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     ArrayList<Cate> cateArrayList;
     SearchView search;
     TabLayout tabLayout;
+    ImageView imageView;
 
     int[] images={R.drawable.ic_dairy,R.drawable.ic_dessert,R.drawable.ic_drinks,R.drawable.ic_fishandseafood,
             R.drawable.ic_fruitsandveggies,R.drawable.ic_grainandbeans,R.drawable.ic_meatanddeli,R.drawable.ic_poultryandeggs};
@@ -58,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         setContentView(R.layout.activity_main);
         setTitle("");
-
+        imageView = (ImageView) findViewById(R.id.main_activity_image);
         //adding data to catearraylist
         cateArrayList = new ArrayList<>();
         for(int i=0;i<names.length;i++)
@@ -82,23 +87,28 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
        });
           //for search
         sarrayList= new ArrayList<>();
-        sarrayList=new DataRepo(getApplicationContext()).getNameListByKeyword();
+        sarrayList=new CategoryRepo(getApplicationContext()).getCategoryList();
         if(sarrayList!=null){
         arrayAdapter = new SearchAdapter(sarrayList,MainActivity.this);
         listView= (ListView) findViewById(R.id.mainactivity_listview);
         listView.setAdapter(arrayAdapter);}
+
         //  listView.setTextFilterEnabled(false);
 
        //for tabs
        tabLayout= (TabLayout) findViewById(R.id.tab_layout);
-       tabLayout.setSelectedTabIndicatorColor(getResources().getColor(R.color.colorAccent));
+        tabLayout.setScrollPosition(1,0,true);
 
        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
            @Override
            public void onTabSelected(TabLayout.Tab tab) {
             int i=tab.getPosition();
+               if(i==1){
+                   Intent in = new Intent(MainActivity.this,MainActivity.class);
+                   startActivity(in);
 
-           if(i==1){}
+               }
+
            if(i==2){
                Intent in = new Intent(MainActivity.this,UpgardeActivity.class);
                startActivity(in);
@@ -138,18 +148,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         getMenuInflater().inflate(R.menu.options_menu, menu);
 
         SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-         search = (SearchView) menu.findItem(R.id.search).getActionView();
+        search = (SearchView) menu.findItem(R.id.search).getActionView();
         search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
         //search.setSubmitButtonEnabled(true);
         search.setIconifiedByDefault(false);
         search.setOnQueryTextListener(this);
         final MenuItem searchItem = menu.findItem(R.id.search);
         searchItem.collapseActionView();
+
         MenuItemCompat.setOnActionExpandListener(searchItem, new MenuItemCompat.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
                 listView.setVisibility(View.GONE);
-
+                imageView.setVisibility(View.VISIBLE);
                 girdView.setVisibility(View.VISIBLE);
                 return true;
             }
@@ -158,14 +169,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             public boolean onMenuItemActionCollapse(MenuItem item) {
                 // Write your code here
                 listView.setVisibility(View.GONE);
+                imageView.setVisibility(View.VISIBLE);
                 girdView.setVisibility(View.VISIBLE);
-
-
                 InputMethodManager imm = (InputMethodManager) getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE);
-//Hide:
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
-                search.setFocusable(false);
+
                 return false;
             }
         });
@@ -184,14 +193,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        listView.setVisibility(View.VISIBLE);
 
-        girdView.setVisibility(View.GONE);
 
-        arrayAdapter.getFilter().filter(newText);
+    arrayAdapter.getFilter().filter(newText);
+    listView.setVisibility(View.VISIBLE);
+    imageView.setVisibility(View.GONE);
+    girdView.setVisibility(View.GONE);
+
 
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
+finish();
+
+
+    }
 }

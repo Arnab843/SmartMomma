@@ -1,6 +1,7 @@
 package com.mindmines.smartmomma.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.Filterable;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.mindmines.smartmomma.DescriptionActivity;
+import com.mindmines.smartmomma.MainActivity;
 import com.mindmines.smartmomma.R;
 
 import java.util.ArrayList;
@@ -64,7 +67,12 @@ public class SearchAdapter extends BaseAdapter implements Filterable{
         tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(c,arrayList.get(position),Toast.LENGTH_LONG).show();
+
+              if(!s.equals("not found")){
+                Intent indes =new Intent(c,DescriptionActivity.class);
+                indes.putExtra("categoryname",arrayList.get(position));
+                indes.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                c.startActivity(indes);}
             }
         });
         return convertView;
@@ -101,8 +109,11 @@ public class SearchAdapter extends BaseAdapter implements Filterable{
                 for(int i=0;i<filterlist.size();i++){
                     if(filterlist.get(i).toUpperCase().contains(constraint)){
                    String p= filterlist.get(i);
-                    filters.add(p);
-                }}
+
+                        filters.add(p);
+                }
+
+                }
                 results.count=filters.size();
                 results.values=filters;
             }
@@ -118,6 +129,9 @@ public class SearchAdapter extends BaseAdapter implements Filterable{
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
          arrayList= (ArrayList<String>) results.values;
+            if(arrayList.isEmpty()){
+                arrayList.add("not found");
+            }
          notifyDataSetChanged();
         }
     }
