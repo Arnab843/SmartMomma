@@ -2,14 +2,17 @@ package com.mindmines.smartmomma;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
@@ -17,6 +20,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -59,11 +64,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if(showdosclaimer){
         Intent intent1 = new Intent(this,DiscliamerActivity.class);
         startActivity(intent1);}
+        //
 
 
         setContentView(R.layout.activity_main);
         setTitle("");
         imageView = (ImageView) findViewById(R.id.main_activity_image);
+        textView=(TextView)findViewById(R.id.main_activity_text);
+
         //adding data to catearraylist
         cateArrayList = new ArrayList<>();
         for(int i=0;i<names.length;i++)
@@ -152,7 +160,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
         //search.setSubmitButtonEnabled(true);
         search.setIconifiedByDefault(false);
+       // search.setQuery("india",false);
+        search.setQueryHint("Search");
         search.setOnQueryTextListener(this);
+
         final MenuItem searchItem = menu.findItem(R.id.search);
         searchItem.collapseActionView();
 
@@ -162,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 listView.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
                 girdView.setVisibility(View.VISIBLE);
+                textView.setVisibility(View.VISIBLE);
                 return true;
             }
 
@@ -171,11 +183,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 listView.setVisibility(View.GONE);
                 imageView.setVisibility(View.VISIBLE);
                 girdView.setVisibility(View.VISIBLE);
+                textView.setVisibility(View.VISIBLE);
                 InputMethodManager imm = (InputMethodManager) getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
 
 
-                return false;
+                return true;
             }
         });
 
@@ -199,7 +212,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     listView.setVisibility(View.VISIBLE);
     imageView.setVisibility(View.GONE);
     girdView.setVisibility(View.GONE);
-
+    textView.setVisibility(View.GONE);
 
         return true;
     }
@@ -208,8 +221,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void onBackPressed() {
         super.onBackPressed();
 
-finish();
-
-
+        finish();
+         System.exit(0);
     }
 }

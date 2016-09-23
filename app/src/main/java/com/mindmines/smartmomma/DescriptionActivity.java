@@ -147,9 +147,9 @@ public class DescriptionActivity extends AppCompatActivity implements SearchView
                 linearLayout.setVisibility(View.VISIBLE);
                 InputMethodManager imm = (InputMethodManager) getSystemService(AppCompatActivity.INPUT_METHOD_SERVICE);
                 imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                 imm=null;
 
-
-                return false;
+                return true;
             }
         });
 
@@ -176,4 +176,14 @@ public class DescriptionActivity extends AppCompatActivity implements SearchView
 
         return true;
     }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        finish();
+
+    }
 }
+

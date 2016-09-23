@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.mindmines.smartmomma.Background.Mytask;
 
@@ -36,6 +37,9 @@ Button agree,disagree;
                     Mytask mytask = new Mytask(getApplicationContext());
                     mytask.execute("http://smartmommafoodfinderwebapi.azurewebsites.net/v1/food/getdataupdate?dataDateTime=2016-08-14T11:11:11");
                 }
+                else{
+                    Toast.makeText(DiscliamerActivity.this,"Get internent connection",Toast.LENGTH_LONG).show();
+                }
 
             }
         });
@@ -62,5 +66,17 @@ Button agree,disagree;
                 activeNetwork.isConnectedOrConnecting();
 
         return isConnected;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//***Change Here***
+        startActivity(intent);
+        finish();
+        System.exit(0);
+
     }
 }
